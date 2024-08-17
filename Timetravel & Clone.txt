@@ -1,0 +1,141 @@
+SHOW TABLES;
+
+Select * from  CRICKET_MATCH;
+
+
+UPDATE CRICKET_MATCH 
+SET CITY='BENGALURU';
+
+Select * from CRICKET_MATCH where CITY='Kolkata';
+
+
+SHOW TABLES;
+
+---Update retention time 
+
+ALTER TABLE CRICKET_MATCH 
+SET DATA_RETENTION_TIME_IN_DAYS=10;
+
+
+
+Select distinct city from cricket_match;
+
+
+---- will try to access previous data 
+
+--- 3ways to query historical data 
+
+--1 by going back in clock 
+
+Select distinct city from cricket_match at (offset => -60*10);
+
+
+--2 
+
+Select * from cricket_match before (statement =>'01b3c9e2-3201-3052-0003-2e5a00661bca');
+
+
+
+--3 by checkimg at specific time
+
+Select * from cricket_match at(timestamp => 'Wed, 17 April 2024 16:20:00 -0700'::timestamp_tz);
+
+CREATE TABLE MATCHDATA AS 
+Select * from cricket_match at(timestamp => 'Wed, 17 April 2024 16:20:00 -0700'::timestamp_tz);
+
+
+
+SHOW TABLES;
+
+----- What if i have dropped a Table 
+
+Select * from BOLLYWOODMOVIES;
+
+DROP TABLE BOLLYWOODMOVIES;
+
+Select  * from BOLLYWOODMOVIES at (offset =>-60*10);
+
+UNDROP TABLE BOLLYWOODMOVIES;
+
+Select * from SNOWFLAKE.ACCOUNT_USAGE.TABLE_STORAGE_METRICS;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------- ZERO COPY CLONE 
+
+CREATE OR REPLACE DATABASE APRIL25DB CLONE ARPIL24_DB;
+
+
+CREATE OR REPLACE TABLE  IPLMATCH CLONE CRICKET_MATCH;
+
+Select * from IPLMATCH; --1M : --10K 
+
+
+Select * from ARPIL24_DB.INFORMATION_SCHEMA.TABLE_STORAGE_METRICS Where TABLE_CATALOG='ARPIL24_DB' and TABLE_SCHEMA='RAW_LAYER';
+
+
+-->CLONE + TT 
+
+
+CREATE OR REPLACE TABLE  IPLMATCH CLONE CRICKET_MATCH at (offset => -60*60);
+
+Select * from IPLMATCH;
+
+ALTER TABLE CRICKET_MATCH SWAP WITH IPLMATCH;
+
+Select * from CRICKET_MATCH;
+
+
+ALTER TABLE CRICKET_MATCH 
+ADD INFORMATION VARCHAR;
+
+Select * from CRICKET_MATCH at (offset =>-60*4);
+
+
+Select * from BOLLYWOODMOVIES at (offset =>-60*10);
+
+Select * from BOLLYWOODMOVIES before (statement =>'01b3ca23-3201-3053-0003-2e5a00660d42');
+
+ALTER TABLE BOLLYWOODMOVIES 
+ADD RUNBY VARCHAR;
+
+
+CREATE OR REPLACE TABLE BOLLYWOODMOVIES (ID int,Name varchar);
+
+Select * from BOLLYWOODMOVIES;;
+
+ALTER TABLE BOLLYWOODMOVIES RENAME TO OLDBOLLYWOODMOVIES;
+
+
+UNDROP TABLE BOLLYWOODMOVIES;
+
+
+
+
+
+SHOW COLUMNS;
+
+
+Select * from ARPIL24_DB.INFORMATION_SCHEMA.COLUMNS  at (offset =>-60*10 ) 
+where TABLE_NAME='BOLLYWOODMOVIES';
+
+
+ALTER TABLE BOLLYWOODMOVIES;
+ADD XYZ STRING;
+
+Select * from SNOWFLAKE.INFORMATION_SCHEMA.TABLES limit 10;
+
+DESC  TABLE BOLLYWOODMOVIES at (offset => -60*10 );

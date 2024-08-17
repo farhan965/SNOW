@@ -1,0 +1,42 @@
+
+
+------------ SNOWPIPE 
+
+ CREATE OR REPLACE PIPE S3_SNOWPIPE  AUTO_INGEST=TRUE AS
+ Copy into CUSTOMER_DATA
+ From @S3_STAGE
+ on_error=skip_file;
+
+
+ LIST @S3_STAGE;
+
+ REMOVE @S3_STAGE/Address_data_2.csv;
+
+
+
+
+
+TRUNCATE CUSTOMER_DATA;
+
+Select * from CUSTOMER_DATA;
+
+
+SHOW PIPES;
+
+Select * from CUSTOMER_DATA;
+
+
+select *
+  from table(information_schema.pipe_usage_history(
+    date_range_start=>to_timestamp_tz('2023-10-20 12:00:00.000 -0700'),
+    date_range_end=>to_timestamp_tz('2023-10-21 12:30:00.000 -0700')));
+
+Select  SYSTEM$PIPE_STATUS('S3_SNOWPIPE');
+
+
+Select * from INFORMATION_SCHEMA.PIPES;
+
+--- How to add file format in run time.
+    COPY INTO CUSTOMER_DATA 
+FROM @STAGE
+FILE_FORMAT = [TYPE=CSV ,SKIP_HEADER=2 FIELD_OPTIONALLY_ENCLOSED_BY ='"')

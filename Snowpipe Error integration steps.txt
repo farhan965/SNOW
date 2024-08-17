@@ -1,0 +1,40 @@
+1- WE NEED TO GO TO AWS and Search SNS 
+2- CREATE SNS TOPIC . (note that ARN) , Access policy everyon in PUB SUB
+3- NOW CREATE SUBSCRITPTION ( pass email and then confirm that subscription ) 
+4- HEAD TO IAM , CREATE POLICY FOR YOUR ERROR NOTIFICATION , JSON 
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "sns:Publish"
+            ],
+            "Resource": "arn:aws:sns:us-east-1:966536614521:Snowpipe_error"--- your AWS SNS ARN
+        }
+    ]
+}
+
+
+5- NOW CREATE Seprate IAM ROLE then attach the above policy , now note this ROLE ARN 
+
+6- HEAD to snowflake and create error integration 
+CREATE OR REPLACE NOTIFICATION INTEGRATION error_int
+ENABLED=TRUE
+TYPE=QUEUE
+NOTIFICATION_PROVIDER =AWS_SNS
+DIRECTION=OUTBOUND
+AWS_SNS_TOPIC_ARN='arn:aws:sns:us-east-1:966536614521:Snowpipe_error' --2nd step ARN 
+AWS_SNS_ROLE_ARN='arn:aws:iam::966536614521:role/AWS_ERROR_ROLE'; -- 5th step ARN
+
+7- DESC this integration and use External id and & IAM USER ARN , copy these and replace in the role which we created in step 5.
+
+8- now create a pipe and use this error_integration before copy statment . 
+
+9- YOU ARE DONE :) 
+
+
+
+
+

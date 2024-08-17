@@ -1,0 +1,239 @@
+SHOW TABLES;
+
+Select * from IPLMATCH;
+
+Update IPLMATCH 
+SET CITY ='DELHI' ;
+
+
+
+Delete from IPLMATCH Where PLAYER_OF_MATCH ='BB McCullum';
+
+
+CREATE OR REPLACE STREAM STR_MATCH
+ON TABLE IPLMATCH;
+
+SHOW TABLES;
+
+DELETE from IPLMATCH 
+WHERE DATES='2008-04-20';
+
+SELECT * FROM STR_MATCH;
+
+
+Insert into IPLMATCH
+VALUES 
+(60,	2008,	'DELHI',	'2008-04-18',	'Kolkata Knight Riders',	'Royal Challengers Bangalore',	'Royal Challengers Bangalore',	'field',	'normal',	0,	'Kolkata Knight Riders',	140,	0,	'BB McCullum',	'M Chinnaswamy Stadium',	'Asad Rauf',	'RE Koertzen',
+	null);
+
+    SHOW STREAMS;
+
+
+
+    Select * from IPLMATCH limit 10;
+
+
+    --- DEFAULT  -- DML  I,D,U
+    --  APPEND_ONLY  -- I  
+    --  INSERT_ONLY   -- Inserted  : EXTERNAL TABLES 
+
+
+ SHOW TABLES;
+
+ CREATE OR REPLACE STREAM STR_MOVIES
+ ON TABLE BOLLYWOODMOVIES 
+ APPEND_ONLY=TRUE;
+
+  CREATE OR REPLACE STREAM STR_MOVIES2
+ ON TABLE BOLLYWOODMOVIES ;
+
+Select * from STR_MOVIES1;
+Select * from STR_MOVIES2;
+
+CREATE TABLE CONSUME AS 
+Select * from STR_MOVIES1;
+ 
+ SHOW STREAMS;
+
+ Select * from STR_MOVIES;
+
+ Select * from BOLLYWOODMOVIES;
+
+ Delete from BOLLYWOODMOVIES where TITLE='Ashish';
+
+ UPDATE BOLLYWOODMOVIES 
+ SET TITLE= 'Megan fox Kaushal' where TITLE='Megan fox';
+
+
+
+
+ --2024-05-04 22:06:01.718 -0700 
+
+
+ CREATE TABLE CDCDATA 
+ AS 
+ SELECT * EXCLUDE(METADATA$ACTION,METADATA$ISUPDATE) from STR_MATCH;
+
+    Select * from CDCDATA;
+
+    Select * from STR_MATCH;
+
+    SHOW STREAMS;--2024-05-04 22:19:20.203 -0700  ///2024-07-19 22:19:20.203 -0700
+
+
+
+    ALTER TABLE IPLMATCH
+    SET MAX_DATA_EXTENSION_TIME_IN_DAYS=90;
+
+
+
+
+
+    ------------ TASK 
+
+   TASKS : TWO TYPES 
+1- USER MANAGED
+2- SERVERLESS 
+
+---  CREATE sequence
+
+CREATE OR REPLACE SEQUENCE SEq1
+START = 1 
+INCREMENT = 1;
+
+Select SEq1.nextval;
+----
+
+CREATE OR REPLACE TABLE ROUGH 
+(ID int default SEq1.nextval,
+Name varchar);
+
+INSERT INTO ROUGH(NAME) VALUES ('TASK exeucted');
+
+Select * from ROUGH;
+
+
+
+TRUNCATE TABLE ROUGH;
+
+----------  USER MANAGED TASK
+
+CREATE OR REPLACE TASK FIRSTTASK
+WAREHOUSE = APRILBATCH  --- if we dont pass this will become serverless
+SCHEDULE ='1 Minute'
+AS 
+INSERT INTO ROUGH(NAME) VALUES ('TASK exeucted'); 
+
+
+SHOW TASKS;
+
+
+ALTER TASK FIRSTTASK SUSPEND;
+
+
+Select * from ROUGH;
+
+
+
+--- to check task history
+
+
+Select * from TABLE(INFORMATION_SCHEMA.TASK_HISTORY()) WHERE NAME='FIRSTTASK';
+
+
+CREATE OR REPLACE TASK T2
+WAREHOUSE = TEST_WH
+SCHEDULE ='11520 Minute'  --8 days 
+AS 
+INSERT INTO ROUGH(NAME) VALUES ('TASK exeucted');  --- 8 days
+
+ ---Serveless task 
+ CREATE OR REPLACE TASK T3
+ SCHEDULE='2 minute'
+ AS 
+ Insert into ROUGH VALUES (100,'Servereless task exuectued');
+
+ SHOW TASKS;
+
+
+
+----   CRON TASK 
+CREATE OR REPLACE TASK crontask
+--WAREHOUSE = TEST_WH
+SCHEDULE ='USING CRON 30 12 * * 1 Asia/Kolkata'
+AS 
+INSERT INTO ROUGH(NAME) VALUES ('TASK exeucted');  
+
+
+
+
+
+---- TASK TREE
+--for child task lets create child table
+
+CREATE TABLE CHILDDTASK 
+(Status varchar);
+
+
+--- CHILD TASK 
+
+
+
+CREATE  OR REPLACE TASK CHILDTASK
+AFTER FIRSTTASK
+AS 
+INSERT INTO CHILDDTASK VALUES ('Parent task exuectued succesfully');
+
+CREATE TASK CHILDTASK2
+WAREHOUSE=APRILBATCH
+AFTER CHILDTASK
+AS 
+INSERT INTO CHILDDTASK VALUES ('Parent task exuectued succesfully');
+
+SHOW TASKS;
+
+SHOW TASKS;
+
+
+
+DROP TASK  FIRSTTASK;
+
+ALTER TASK FIRSTTASK SUSPEND;
+ALTER TASK CHILDTASK SUSPEND;
+
+ALTER TASK CHILDTASK2 SUSPEND;
+
+DROP TASK t1;
+
+
+Select * from TABLE(INFORMATION_SCHEMA.TASK_HISTORY());
+
+
+
+
+
+
+Select * from CHILDDTASK;
+
+
+
+
+CREATE OR REPLACE TASK CLONE_T1
+CLONE T1;
+
+SHOW TASKS;
+
+
+
+
+----- Error notification for Tasks
+
+
+Create or replace task --- taskname
+warehouse=
+schedule=
+user_task_timeout_ms=
+ERROR_INTEGRATIOn=
+USER_TASK_MANAGED_INTITAL_WAREHOUSE_SIZE=
+AS
+SQL STATEMENT;

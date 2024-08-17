@@ -1,0 +1,31 @@
+SHOW STAGES;
+
+LIST @AWSS3_STAGE;
+Select $1,$2,$3 from @AWSS3_STAGE;
+
+CREATE OR REPLACE EXTERNAL TABLE my_ext_table;
+  WITH LOCATION = @AWSS3_STAGE
+  auto_referesh=true
+  FILE_FORMAT = (TYPE = CSV  SKIP_HEADER = 1);
+  --PATTERN='.*employee.*[.]csv';
+
+  Select * from my_ext_table;
+
+
+SELECT $1:c1, $1:c2, $1:c3, $1:c4, $1:c5 FROM my_ext_table; 
+
+
+  CREATE OR REPLACE EXTERNAL TABLE MYEXTTABLE(
+ EMPLOYEE_ID varchar AS (value:c1::varchar),
+ NAME varchar AS (value:c2::varchar),
+ ADDRESS varchar AS (value:c3::varchar)
+ )
+WITH LOCATION=@AWSS3_STAGE
+--PATTERN='.*employee.*[.]csv'
+FILE_FORMAT = (TYPE = CSV  SKIP_HEADER = 1)
+;
+Select VALUE,METADATA$FILENAME,METADATA$FILE_ROW_NUMBER from MYEXTTABLE;
+
+Select * from MYEXTTABLE;
+
+SHOW STAGES;

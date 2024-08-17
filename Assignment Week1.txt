@@ -1,0 +1,50 @@
+1- Create Virutal warehouse named COMPUTE_WH,which should be S small size with 3 clusters.
+   that same warehouse should be auto suspend after 4 min?
+
+2-  Share the screenshot of WH configuration in result window.
+
+3- Create Folder and organize your all worksheet under March folder.
+
+4- Create Database Practice & Source Schema. 
+
+5- Explain the difference between Scaling up & Scaling out and where we will use these two , give us some examples.
+
+6- Write command to change Suspend the Warehouse and change warehouse properties.
+
+7- Paste your organization name,account name,Account region and locator. 
+
+8- Export one Dataset from Market place and query that data. 
+
+9- If I have one warehouse Medium size with 10 mins of auto_suspend time
+   and we executed queries for 50 seconds , How many  minutes/seconds will be billed by Snowflake?
+
+10- What all type of data we can store in Snowflake ?How much we will pay for Azure hosted (US region )Snowflake Business critical account for 10TB? 
+
+11- I have executed one table in snowflake and intially it took 1 min , but later it took some ms, What can be the reason ??
+
+12- Can we run some queries even when our Warehouse is inactive/off . if yes then explain which can be those queries??
+
+13- What are the madatory four properties we set as a context in our worksheet before running any queries??
+
+14- Create Permanent table, Transient table & Temporary tables and with Samename, What will happen in this case ?
+
+15- List down some queries, which will return the data from Metadata cache, Paste the screenshot for proof that it was Metada operations.??
+
+16- Explain the key differences between Onprem and Snowflake ??
+
+17- How would you make sure , your query is not returning result from Query result cache?
+
+18- What are the all Warehouse sizes available and If i am selecting XL how many dollars i will spend in whole day of my activity?
+
+
+19- :  Suppose, you are 5 memeber of team, You all have Same roles. Now all of you trying to retrive data / writing  queries or load data. 
+
+1- ABC triggered some queries from Matillion , XYZ triggered same queries from Snowsight only . I want to know why there is cost difference ??
+
+2- ABC and XYZ both are using Snowsight , ABC created one table Customer then why XYZ is not able to see Customer in his machine??
+
+
+20- Which constraints is enforced by Snowflake?? 
+
+ 
+

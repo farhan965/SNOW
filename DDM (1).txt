@@ -1,0 +1,173 @@
+---masking  policy 
+
+
+create or replace masking policy mask_ssn as (ssn_txt string)
+    returns string ->
+    case
+        when current_role() in ('ACCOUNTADMIN')      then ssn_txt
+        when current_role() in ('CALL_CENTER_AGENT') then regexp_replace(ssn_txt,substring(ssn_txt,1,7),'xxx-xx-')
+        when current_role() in ('PROD_SUPP_MEMBER') then 'xxx-xx-xxxx'
+        else '***You cant see me***'
+    end;
+
+
+
+
+
+create or replace table US_Customer(
+    id number,
+    first_name string,
+    last_name string,
+    DoB string,
+    ssn string masking policy mask_ssn,
+    country string,
+    city string,
+    zipcode string);
+
+    DESC TABLE US_CUSTOMER;
+
+--  For an existing table or view, execute the following statements:
+alter table if exists US_CUSTOMER modify column ssn set masking policy mask_ssn;
+
+--- How we can remove the masking policy 
+alter table if exists US_CUSTOMER modify column ssn unset masking policy;
+
+INSERT INTO US_CUSTOMER VALUES (100,'Kaushal','Sharma','20-05-1991','ABCDZYXDEF','USA','BOSTON','310012'),
+
+(200,'Nishant','OMAR','20-05-1991','ZSBIOSJNNS','USA','NYC','310012'),
+(300,'AJITA','PADHI','20-05-1991','dkjdbbwejn','USA','CALIFORNIA','310012'),
+(400,'ANSHI','Sharma','20-05-1991','SIJBDIWDJBIJ','USA','NESY','310012'),
+(400,'vinoth','kumar','20-05-1991','UYSHZJKAN','USA','NEW JERSY','310012');
+
+
+Select * from US_CUSTOMER where SSN='ZSBIOSJNNS' ;
+
+
+---- Hpw we gonna provide access to Database and Tables to role
+
+GRANT USAGE  ON DATABASE ARPIL24_DB TO ROLE CALL_CENTER_AGENT;
+GRANT ALL ON SCHEMA ARPIL24_DB.RAW_LAYER TO ROLE CALL_CENTER_AGENT;
+GRANT SELECT,INSERT,UPDATE ON ALL TABLES IN SCHEMA  ARPIL24_DB.RAW_LAYER TO ROLE CALL_CENTER_AGENT;
+GRANT USAGE ON WAREHOUSE APRILBATCH TO ROLE CALL_CENTER_AGENT;
+
+GRANT USAGE  ON DATABASE ARPIL24_DB TO ROLE PROD_SUPP_MEMBER;
+GRANT ALL ON SCHEMA ARPIL24_DB.RAW_LAYER TO ROLE PROD_SUPP_MEMBER;
+GRANT SELECT ON ALL TABLES IN SCHEMA  ARPIL24_DB.RAW_LAYER TO ROLE PROD_SUPP_MEMBER;
+GRANT USAGE ON WAREHOUSE APRILBATCH TO ROLE PROD_SUPP_MEMBER;
+
+
+
+GRANT USAGE  ON DATABASE ARPIL24_DB TO ROLE MATILLION_DEVELOPER;
+GRANT ALL ON SCHEMA ARPIL24_DB.RAW_LAYER TO ROLE MATILLION_DEVELOPER;
+GRANT SELECT,INSERT,UPDATE ON ALL TABLES IN SCHEMA  ARPIL24_DB.RAW_LAYER TO ROLE MATILLION_DEVELOPER;
+GRANT USAGE ON WAREHOUSE APRILBATCH TO ROLE MATILLION_DEVELOPER;
+
+USE ROLE CALL_CENTER_AGENT;
+
+SHOW TABLES;
+
+Select * from US_CUSTOMER;
+
+
+
+
+-----------multiple masking policy 
+
+-- masking policy to mask first name
+create or replace masking policy mask_fname as (fname_txt string) returns string ->
+  case
+  WHEN current_role() in ('ACCOUNTADMIN') THEN fname_txt
+    when current_role() in ('CALL_CNETER_AGENT') then 'xxxxxx'
+    when current_role() in ('PROD_SUPP_MEMBER') then 'MEGAN FOX'
+    else 'WHATs MY NAME,MY NAME IS SHILA'
+  end;
+  
+-- apply mask_fname masking policy to customer.first_name column
+    alter table if exists US_CUSTOMER modify column first_name set masking policy mask_fname;
+
+    alter table if exists US_CUSTOMER modify column first_name unset masking policy;
+
+    
+
+  -- masking policy to mask last name
+create or replace masking policy mask_lname as (lname_txt string) returns string ->
+  case
+    when current_role() in ('ACCOUNTADMIN') then lname_txt
+    when current_role() in ('CALL_CNETER_AGENT') then lname_txt
+    when current_role() in ('PROD_SUPP_MEMBER') then 'xxxxxx'
+    else NULL
+  end;
+-- apply mask_lname masking policy to customer.last_name column
+alter table if exists US_CUSTOMER modify column last_name set masking policy mask_lname;
+
+-- masking policy to mask date of birth name
+create or replace masking policy .mask_dob as (dob_txt string) returns string ->
+  case
+    when current_role() in ('CALL_CNETER_AGENT') then regexp_replace(dob_txt,substring(dob_txt,1,8),'xxxx-xx-')
+    when current_role() in ('PROD_SUPP_MEMBER') then 'xxxx-xx-xx'
+    else NULL
+  end;
+
+-- apply mask_dob masking policy to customer.dob column
+alter table if exists US_CUSTOMER modify column dob set masking policy mydb.myschema.mask_dob;
+
+
+
+
+Select  * from US_CUSTOMER 
+
+
+
+
+
+
+
+
+------------------
+
+
+create or replace table India_Customer(
+    id number,
+    first_name string,
+    last_name string,
+    DoB string,
+    ssn string masking policy mask_ssn,
+    country string,
+    city string,
+    zipcode string);
+
+
+-- How to apply masking policies created by other admin 
+    SHOW MASKING POLICIES;
+
+     GRANT APPLY MASKING POLICY on ACCOUNT to ROLE PROD_SUPP_MEMBER;
+
+    GRANT SELECT ON MASKING  POLICY ON SCHEMA DB_COURSEDRILL.SOURCE_SCHEMA TO ROLE PROD_SUPP_MEMBER;
+
+
+
+
+
+    ---- 
+
+
+
+
+    Select * from snowflake.account_usage.policy_references;
+
+
+
+  CREATE TABLE CUSTOMER_DATA AS 
+  SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1000.CUSTOMER;
+
+  DESC TABLE CUSTOMER_DATA;
+
+ alter table if exists CUSTOMER_DATA modify column C_NAME set masking policy mask_fname;
+
+
+
+
+ GRANT SELECT ON TABLE CUSTOMER_DATA TO ROLE MATILLION_DEVELOPER;
+
+ ALTER SESSION 
+ SET USED_RESULT_CACHE=FALSE;

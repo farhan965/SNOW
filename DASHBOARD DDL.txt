@@ -1,0 +1,52 @@
+-- TOTAL WAREHOUSE
+Select count(Distinct WAREHOUSE_NAME) from SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY;
+
+
+---total datbases
+
+SELECT DISTINCT DATABASE_NAME FROM SNOWFLAKE.ACCOUNT_USAGE.DATABASES;
+
+--total tables 
+
+SELECT DISTINCT TABLE_NAME FROM SNOWFLAKE.ACCOUNT_USAGE.TABLES;
+
+
+
+
+
+--TOTAL QUERY 
+Select count(*) from snowflake.account_usage.query_history
+where warehouse_name=:warehouse;
+
+
+AVG QUERY EXECUTION 
+
+Select to_decimal(avg(total_elapsed_time)/1000,5,3) from snowflake.account_usage.query_history 
+where warehouse_name=:warehouse;
+
+--credit consumption month wise
+
+Select  SUM(CREDITS_USED),MONTHNAME(START_TIME) as MONTHs
+from snowflake.account_usage.warehouse_metering_history
+where warehouse_name=:warehouse
+GROUP BY MONTHNAME(START_TIME)
+
+
+
+-LAST 7 days consumption 
+
+Select SUM(CREDITS_USED),WAREHOUSE_NAME,DAY(START_TIME) from 
+snowflake.account_usage.warehouse_metering_history 
+Where DATE(START_TIME)>=dateadd(day,-7,getdate())
+group by warehouse_name,day(start_time)
+
+
+
+--- Warehouse wise monthly spedn
+
+Select warehouse_name,to_char(start_time,'YYYY-MM') as month,  sum(credits_used) as total
+from 
+SNOWFLAKE.ACCOUNT_USAGE.warehouse_metering_history 
+group by warehouse_name,to_char(start_time,'YYYY-MM')
+
+

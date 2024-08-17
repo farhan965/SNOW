@@ -1,0 +1,56 @@
+--- CREATE TABLE 
+
+CREATE OR REPLACE TABLE CUSTOMER_DATA 
+(
+C_CUSTKEY INT,
+C_NAME	 VARCHAR,
+C_ADDRESS VARCHAR,
+C_NATIONKEY INT,
+C_PHONE VARCHAR,
+C_ACCTBAL	VARCHAR,
+C_MKTSEGMENT VARCHAR,
+C_COMMENT VARCHAR
+
+
+);
+
+
+----create storage intergation
+
+
+
+Create or replace storage Integration S3_INT
+     Type=External_stage
+      Storage_provider=S3
+      enabled=True   
+Storage_aws_role_arn='arn:aws:iam::638114135227:role/VINCENT_ROLE'
+Storage_allowed_locations=('s3://snowflakeoctbatchtraining/CSVdata/');  
+
+
+DESC Integration S3_INT;
+
+
+
+--- we gonna create ext stage 
+
+CREATE OR REPLACE  STAGE S3_STAGE
+file_format=CSV_TYPE
+STORAGE_INTEGRATION=S3_INT
+URL='s3://snowflakeoctbatchtraining/CSVdata/';
+
+SHOW STAGES;
+
+LIST @S3_STAGE;
+
+TRUNCATE TABLE CUSTOMER_DATA;
+
+COPY INTO CUSTOMER_DATA
+FROM @S3_STAGE/customerdata.csv
+FORCE=TRUE;
+--ON_Error=SKIP_FILE;
+
+
+COPY INTO CUSTOMER_DATA 
+FROM @S3_STAGE 
+VALIDATION_MODE= RETURN_ALL_ERRORS;
+

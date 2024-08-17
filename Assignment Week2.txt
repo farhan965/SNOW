@@ -1,0 +1,77 @@
+1- Create File format for CSV type?
+2- Write the Mandatory Parameters to load any simple CSV files.
+3- What is the limit to load data from UI ?
+4- Can we load EXCEL file from UI?
+5- What are the various method to load data?
+6- Which cache is available irrespective of quering the table?
+7- Explain the Execution Plan in simple words?
+8- What are the type of caching techniques availabel in Snowflake?
+9- Load this Spotify.csv in snowflake?
+10 - What are the data types available for storing Semi Structre data.
+11- What all semi sturctured file can be loaded in Snowflake?
+12- What are the different types of Tables we have in Snowflake ?
+13- Which type of tables don't have Fail Safe period.
+14- What will happen If i create Temporary table with same name of Transient or Permanent table?
+15- How does snowflake handle file formats in stages during data loading ?
+16- Why We should create Internal stages, when we already have Table/User Stages?
+17- How we can list down all the files from Stages?
+18- Write down the query to show the associate storage in each category orderd by desc.
+19- Where would you use Trasient table over Permanent tables and why ?
+20- How would you set up the SnowSQL ?
+21- What are those commands which run only on Snowsql?
+22- In which Cloud Snowflake will always overwrite the files when we load in stages?
+23- Describe the Security consideration associated with Snowflake Stages?
+24- What will happen If I try to load the same file in stages from local machine which is already in Stages?
+25- Perform this activity to analyze the Warehouse performance,which operation will be faster ?
+ a- First load 10GB of single file and load into Table using Small Warehouse.
+ b- Now convert that file into 20 files and load using Small warheouse. 
+
+26- Load JSON,AVRO,ORC,PARQUET files in single Stages and fetch data.
+27- What is the usages of PARALLEL Parameter during PUT command ?
+28- Load data from SNowfake_sample_data.TPCH_Sf1.CUSTOMER into one Single files and then copy it in your local machine with SFCUSTOMER prefix.
+29 - Suppose I have 30 files in my local folders and I want to load all those files in single shot to my Internal stages How would you do that ?
+30- What are the FILE STAGING Commands we have in Snowflake?
+31- If i have created one table Name customer, what can be the possible reasons That table is not available in Snowsight ?
+
+
+
+32- What all type of transformation is supported in COPY into Command?
+33- Write the query for below scenarios 
+   a- Dump 5 files to Internaal stages with same Structure and Copy these files from Internal stages to Table, Make sure we 
+    	have Audit columns, Who dumped these files,when this records were inserted , LASTMODIFIED TIme Stamp and Filenames.
+   b- We need to have all failure files list with errors.
+   c- If 1M records are there and out of that 100 are incorrect then you should load rest files and create seprate file for all errors.
+
+34- What all Metadata fields are avialable in Stages.
+
+35 : I have 12 columns in my files but in Tables we only got 9 colums,Now client asked me to load this data in my tables but i need to skip
+    staring 2 columns and last columns, How would you acheive it in Snowflake?
+
+36 : Take CUSTOMER Table from Snowflake_sample_data.TPCH_SF1.ORDER and copy this table in Stage called ORDER_STAGE. Stage files should start with Order prefix.
+
+
+
+37- What are the common Parameters we have in COPY INTO TABLE FROM STAGE commands and which all have you used ??
+
+38- Suppose there is one common stages which is used by 5 users in single Team, Manager tried to know who loaded these files but he could not figured out
+    you being a developer, How can you help him ??
+
+39- I have specified FILE FORMAT in Stages and then specfied parameters in COPY INTO commands, which file format parameters will be used by snowflake in this case ??
+
+
+40- I have one stage as STG_CSV and second is STAGING_CSV, NOW I want to trasfer files from STG_CSV to another stages, How would you acheive it.
+
+
+42: How can we check our previous data of any table and write the query to get data which is deleted by User A. 
+
+43: If i have one Table Customer , That have 2000 records with 10 columns, Now One person mistakenly recreated table with 5 columns.
+   and we need previous data, How would you acheive this .
+
+44 - You need to design one report where you have to list all the tables which are generating extra storage cost, Show top 10 tables with associates storage space .
+
+
+
+
+
+
+
